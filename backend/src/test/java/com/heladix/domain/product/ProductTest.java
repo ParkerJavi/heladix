@@ -3,6 +3,7 @@ package com.heladix.domain.product;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +24,7 @@ class ProductTest {
                 "Helado de vainilla",
                 "Helado sabor vainilla",
                 "HEL-VAN-001",
+                List.of("vainilla"),
                 ProductType.ICE_CREAM,
                 InventoryUnit.LITER,
                 cost
@@ -31,6 +33,7 @@ class ProductTest {
         assertNotNull(product);
         assertEquals(id, product.id());
         assertEquals("Helado de vainilla", product.name());
+        assertEquals(List.of("vainilla"), product.flavors());
         assertEquals(ProductType.ICE_CREAM, product.type());
         assertEquals(InventoryUnit.LITER, product.inventoryUnit());
         assertEquals(cost, product.cost());
@@ -44,6 +47,7 @@ class ProductTest {
                 "Helado de vainilla",
                 "Helado sabor vainilla",
                 "HEL-VAN-001",
+                List.of("vainilla"),
                 ProductType.ICE_CREAM,
                 InventoryUnit.LITER,
                 new Money(new BigDecimal("120.00"), "MXN")
@@ -66,6 +70,7 @@ class ProductTest {
                 "Paleta de mango",
                 "Paleta sabor mango",
                 "PAL-MAN-001",
+                List.of("mango"),
                 ProductType.POPSICLE,
                 InventoryUnit.UNIT,
                 new Money(new BigDecimal("15.00"), "MXN")
@@ -83,6 +88,7 @@ class ProductTest {
                 "Paleta de mango",
                 "Paleta sabor mango",
                 "PAL-MAN-001",
+                List.of("mango"),
                 ProductType.POPSICLE,
                 InventoryUnit.UNIT,
                 new Money(new BigDecimal("15.00"), "MXN")
@@ -103,6 +109,7 @@ class ProductTest {
                         "Helado de vainilla",
                         "Helado sabor vainilla",
                         "HEL-VAN-001",
+                        List.of("vainilla"),
                         ProductType.ICE_CREAM,
                         InventoryUnit.LITER,
                         null

@@ -1,5 +1,6 @@
 package com.heladix.domain.product;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Product {
@@ -12,15 +13,19 @@ public class Product {
     private final InventoryUnit inventoryUnit;
     private Money cost;
     private boolean active;
+    private final List<String> flavors;
+
 
     private Product(
             ProductId id,
             String name,
             String description,
             String sku,
+            List<String> flavors,
             ProductType type,
             InventoryUnit inventoryUnit,
             Money cost
+
     ) {
         this.id = Objects.requireNonNull(id, "Product id cannot be null");
         this.name = Objects.requireNonNull(name, "Product name cannot be null");
@@ -31,6 +36,9 @@ public class Product {
                 inventoryUnit,
                 "Product inventory unit cannot be null"
         );
+        this.flavors = List.copyOf(
+                Objects.requireNonNull(flavors, "Product flavors cannot be null")
+        );
         this.cost = Objects.requireNonNull(cost, "Product cost cannot be null");
         this.active = true;
     }
@@ -40,6 +48,7 @@ public class Product {
             String name,
             String description,
             String sku,
+            List<String>flavors,
             ProductType type,
             InventoryUnit inventoryUnit,
             Money cost
@@ -49,6 +58,7 @@ public class Product {
                 name,
                 description,
                 sku,
+                flavors,
                 type,
                 inventoryUnit,
                 cost
@@ -77,6 +87,9 @@ public class Product {
 
     public String sku() {
         return sku;
+    }
+    public List<String> flavors() {
+        return flavors;
     }
 
     public ProductType type() {
