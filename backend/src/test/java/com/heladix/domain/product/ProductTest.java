@@ -40,6 +40,25 @@ class ProductTest {
         assertTrue(product.active());
     }
     @Test
+    void shouldNotAllowExternalModificationOfFlavors() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("120.00"), "MXN")
+        );
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> product.flavors().add("chocolate")
+        );
+    }
+    @Test
     void shouldChangeProductCost() {
 
         Product product = Product.create(
@@ -116,4 +135,5 @@ class ProductTest {
                 )
         );
     }
+
 }
