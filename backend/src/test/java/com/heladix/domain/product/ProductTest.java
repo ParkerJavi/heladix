@@ -40,6 +40,153 @@ class ProductTest {
         assertTrue(product.active());
     }
     @Test
+    void shouldNotAllowChangingCostToDifferentCurrency() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("120.00"), "MXN")
+        );
+
+        Money newCost = new Money(
+                new BigDecimal("8.00"),
+                "USD"
+        );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> product.changeCost(newCost)
+        );
+    }
+    @Test
+    void shouldRemainInactiveWhenDeactivatedMultipleTimes() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Paleta de mango",
+                "Paleta sabor mango",
+                "PAL-MAN-001",
+                List.of("mango"),
+                ProductType.POPSICLE,
+                InventoryUnit.UNIT,
+                new Money(new BigDecimal("15.00"), "MXN")
+        );
+
+        product.deactivate();
+        product.deactivate();
+
+        assertFalse(product.active());
+    }
+    @Test
+    void shouldRemainActiveWhenActivatedMultipleTimes() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Paleta de mango",
+                "Paleta sabor mango",
+                "PAL-MAN-001",
+                List.of("mango"),
+                ProductType.POPSICLE,
+                InventoryUnit.UNIT,
+                new Money(new BigDecimal("15.00"), "MXN")
+        );
+
+        product.activate();
+        product.activate();
+
+        assertTrue(product.active());
+    }
+    @Test
+    void shouldNotAllowBlankFlavor() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "Helado de mango",
+                        "",
+                        "HEL-MAN-001",
+                        List.of("mango", ""),
+                        ProductType.ICE_CREAM,
+                        InventoryUnit.LITER,
+                        new Money(new BigDecimal("120.00"), "MXN")
+                )
+        );
+    }
+    @Test
+    void shouldAllowBlankProductDescription() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Bolsa de cacahuates",
+                "",
+                "CAC-001",
+                List.of(),
+                ProductType.SNACK,
+                InventoryUnit.UNIT,
+                new Money(new BigDecimal("20.00"), "MXN")
+        );
+
+        assertNotNull(product);
+        assertEquals("", product.description());
+    }
+    @Test
+    void shouldNotAllowBlankProductSku() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "Bolsa de cacahuates",
+                        "Bolsa de cacahuates",
+                        "   ",
+                        List.of(),
+                        ProductType.SNACK,
+                        InventoryUnit.UNIT,
+                        new Money(new BigDecimal("20.00"), "MXN")
+                )
+        );
+    }
+    @Test
+    void shouldNotAllowBlankProductName() {
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "   ",
+                        "Producto de prueba",
+                        "TEST-001",
+                        List.of(),
+                        ProductType.SNACK,
+                        InventoryUnit.UNIT,
+                        new Money(new BigDecimal("20.00"), "MXN")
+                )
+        );
+    }
+    @Test
+    void shouldAllowProductWithoutFlavors() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Bolsa de cacahuates",
+                "Bolsa de cacahuates",
+                "CAC-001",
+                List.of(),
+                ProductType.SNACK,
+                InventoryUnit.UNIT,
+                new Money(new BigDecimal("20.00"), "MXN")
+        );
+
+        assertNotNull(product);
+        assertTrue(product.flavors().isEmpty());
+    }
+    @Test
     void shouldNotAllowExternalModificationOfFlavors() {
 
         Product product = Product.create(

@@ -29,16 +29,32 @@ public class Product {
     ) {
         this.id = Objects.requireNonNull(id, "Product id cannot be null");
         this.name = Objects.requireNonNull(name, "Product name cannot be null");
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Product name cannot be blank");
+        }
         this.description = description;
         this.sku = Objects.requireNonNull(sku, "Product sku cannot be null");
+        if (sku.isBlank()) {
+            throw new IllegalArgumentException("Product sku cannot be blank");
+        }
         this.type = Objects.requireNonNull(type, "Product type cannot be null");
         this.inventoryUnit = Objects.requireNonNull(
                 inventoryUnit,
                 "Product inventory unit cannot be null"
         );
-        this.flavors = List.copyOf(
-                Objects.requireNonNull(flavors, "Product flavors cannot be null")
+        List<String> validatedFlavors = Objects.requireNonNull(
+                flavors,
+                "Product flavors cannot be null"
         );
+
+        if (validatedFlavors.stream().anyMatch(flavor -> flavor.isBlank())) {
+            throw new IllegalArgumentException(
+                    "Product flavors cannot contain blank values"
+            );
+        }
+
+        this.flavors = List.copyOf(validatedFlavors);
+
         this.cost = Objects.requireNonNull(cost, "Product cost cannot be null");
         this.active = true;
     }
@@ -104,10 +120,19 @@ public class Product {
         return cost;
     }
     public void changeCost(Money newCost) {
-        this.cost = Objects.requireNonNull(
+
+        Objects.requireNonNull(
                 newCost,
                 "Product cost cannot be null"
         );
+
+        if (!this.cost.currency().equals(newCost.currency())) {
+            throw new IllegalArgumentException(
+                    "Product cost currency cannot be changed"
+            );
+        }
+
+        this.cost = newCost;
     }
 
     public boolean active() {
