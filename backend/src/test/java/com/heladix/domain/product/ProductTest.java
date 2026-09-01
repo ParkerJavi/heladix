@@ -43,6 +43,60 @@ class ProductTest {
         assertTrue(product.active());
     }
     @Test
+    void shouldNotAllowChangingSellingPriceWhenProductIsInactive() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"), "MXN")
+        );
+
+        product.deactivate();
+
+        Money newSellingPrice = new Money(
+                new BigDecimal("65.00"),
+                "MXN"
+        );
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> product.changeSellingPrice(newSellingPrice)
+        );
+    }
+    @Test
+    void shouldNotAllowChangingCostWhenProductIsInactive() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"), "MXN")
+        );
+
+        product.deactivate();
+
+        Money newCost = new Money(
+                new BigDecimal("40.00"),
+                "MXN"
+        );
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> product.changeCost(newCost)
+        );
+    }
+    @Test
     void shouldChangeProductSellingPrice() {
 
         Product product = Product.create(
@@ -181,6 +235,31 @@ class ProductTest {
         Money newCost = new Money(
                 new BigDecimal("8.00"),
                 "USD"
+        );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> product.changeCost(newCost)
+        );
+    }
+    @Test
+    void shouldNotAllowChangingCostAboveSellingPrice() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"), "MXN")
+        );
+
+        Money newCost = new Money(
+                new BigDecimal("70.00"),
+                "MXN"
         );
 
         assertThrows(
@@ -355,7 +434,7 @@ class ProductTest {
         );
 
         Money newCost = new Money(
-                new BigDecimal("135.00"),
+                new BigDecimal("40.00"),
                 "MXN"
         );
 

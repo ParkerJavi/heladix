@@ -128,6 +128,11 @@ public class Product {
         return cost;
     }
     public void changeCost(Money newCost) {
+        if (!this.active) {
+            throw new IllegalStateException(
+                    "Cannot change product cost when product is inactive"
+            );
+        }
 
         Objects.requireNonNull(
                 newCost,
@@ -139,6 +144,11 @@ public class Product {
                     "Product cost currency cannot be changed"
             );
         }
+        if (newCost.amount().compareTo(this.sellingPrice.amount()) > 0) {
+            throw new IllegalArgumentException(
+                    "Product cost cannot be greater than selling price"
+            );
+        }
 
         this.cost = newCost;
     }
@@ -146,6 +156,11 @@ public class Product {
         return sellingPrice;
     }
     public void changeSellingPrice(Money newSellingPrice) {
+        if (!this.active) {
+            throw new IllegalStateException(
+                    "Cannot change product selling price when product is inactive"
+            );
+        }
 
         Objects.requireNonNull(
                 newSellingPrice,
