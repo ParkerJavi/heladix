@@ -43,6 +43,62 @@ class ProductTest {
         assertTrue(product.active());
     }
     @Test
+    void shouldNotAllowNullProductId() {
+
+        assertThrows(
+                NullPointerException.class,
+                () -> Product.create(
+                        null,
+                        "Helado de vainilla",
+                        "Helado sabor vainilla",
+                        "HEL-VAN-001",
+                        List.of("vainilla"),
+                        ProductType.ICE_CREAM,
+                        InventoryUnit.LITER,
+                        new Money(new BigDecimal("35.00"), "MXN"),
+                        new Money(new BigDecimal("60.00"), "MXN")
+                )
+        );
+    }
+
+    @Test
+    void shouldNotAllowNullProductType() {
+
+        assertThrows(
+                NullPointerException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "Helado de vainilla",
+                        "Helado sabor vainilla",
+                        "HEL-VAN-001",
+                        List.of("vainilla"),
+                        null,
+                        InventoryUnit.LITER,
+                        new Money(new BigDecimal("35.00"), "MXN"),
+                        new Money(new BigDecimal("60.00"), "MXN")
+                )
+        );
+    }
+
+    @Test
+    void shouldNotAllowNullInventoryUnit() {
+
+        assertThrows(
+                NullPointerException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "Helado de vainilla",
+                        "Helado sabor vainilla",
+                        "HEL-VAN-001",
+                        List.of("vainilla"),
+                        ProductType.ICE_CREAM,
+                        null,
+                        new Money(new BigDecimal("35.00"), "MXN"),
+                        new Money(new BigDecimal("60.00"), "MXN")
+                )
+        );
+    }
+    @Test
     void shouldNotAllowChangingSellingPriceWhenProductIsInactive() {
 
         Product product = Product.create(
