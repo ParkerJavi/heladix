@@ -12,6 +12,7 @@ public class Product {
     private final ProductType type;
     private final InventoryUnit inventoryUnit;
     private Money cost;
+    private Money sellingPrice;
     private boolean active;
     private final List<String> flavors;
 
@@ -24,7 +25,8 @@ public class Product {
             List<String> flavors,
             ProductType type,
             InventoryUnit inventoryUnit,
-            Money cost
+            Money cost,
+            Money sellingPrice
 
     ) {
         this.id = Objects.requireNonNull(id, "Product id cannot be null");
@@ -56,6 +58,10 @@ public class Product {
         this.flavors = List.copyOf(validatedFlavors);
 
         this.cost = Objects.requireNonNull(cost, "Product cost cannot be null");
+        this.sellingPrice = Objects.requireNonNull(
+                sellingPrice,
+                "Product selling price cannot be null"
+        );
         this.active = true;
     }
 
@@ -67,7 +73,8 @@ public class Product {
             List<String>flavors,
             ProductType type,
             InventoryUnit inventoryUnit,
-            Money cost
+            Money cost,
+            Money sellingPrice
     ) {
         return new Product(
                 id,
@@ -77,7 +84,8 @@ public class Product {
                 flavors,
                 type,
                 inventoryUnit,
-                cost
+                cost,
+                sellingPrice
         );
     }
 
@@ -133,6 +141,29 @@ public class Product {
         }
 
         this.cost = newCost;
+    }
+    public Money sellingPrice() {
+        return sellingPrice;
+    }
+    public void changeSellingPrice(Money newSellingPrice) {
+
+        Objects.requireNonNull(
+                newSellingPrice,
+                "Product selling price cannot be null"
+        );
+
+        if (!this.sellingPrice.currency().equals(newSellingPrice.currency())) {
+            throw new IllegalArgumentException(
+                    "Product selling price currency cannot be changed"
+            );
+        }
+        if (newSellingPrice.amount().compareTo(this.cost.amount()) < 0) {
+            throw new IllegalArgumentException(
+                    "Product selling price cannot be lower than cost"
+            );
+        }
+
+        this.sellingPrice = newSellingPrice;
     }
 
     public boolean active() {

@@ -18,7 +18,10 @@ class ProductTest {
                 new BigDecimal("120.00"),
                 "MXN"
         );
-
+        Money sellingPrice = new Money(
+                new BigDecimal("120.00"),
+                "MXN"
+        );
         Product product = Product.create(
                 id,
                 "Helado de vainilla",
@@ -27,9 +30,9 @@ class ProductTest {
                 List.of("vainilla"),
                 ProductType.ICE_CREAM,
                 InventoryUnit.LITER,
-                cost
+                cost,
+                sellingPrice
         );
-
         assertNotNull(product);
         assertEquals(id, product.id());
         assertEquals("Helado de vainilla", product.name());
@@ -39,6 +42,127 @@ class ProductTest {
         assertEquals(cost, product.cost());
         assertTrue(product.active());
     }
+    @Test
+    void shouldChangeProductSellingPrice() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"), "MXN")
+        );
+
+        Money newSellingPrice = new Money(
+                new BigDecimal("65.00"),
+                "MXN"
+        );
+
+        product.changeSellingPrice(newSellingPrice);
+
+        assertEquals(newSellingPrice, product.sellingPrice());
+    }
+    @Test
+    void shouldNotAllowNullSellingPrice() {
+
+        assertThrows(
+                NullPointerException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "Helado de vainilla",
+                        "Helado sabor vainilla",
+                        "HEL-VAN-001",
+                        List.of("vainilla"),
+                        ProductType.ICE_CREAM,
+                        InventoryUnit.LITER,
+                        new Money(new BigDecimal("35.00"), "MXN"),
+                        null
+                )
+        );
+    }
+    @Test
+    void shouldNotAllowChangingSellingPriceToDifferentCurrency() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"), "MXN")
+        );
+
+        Money newSellingPrice = new Money(
+                new BigDecimal("4.00"),
+                "USD"
+        );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> product.changeSellingPrice(newSellingPrice)
+        );
+    }
+    @Test
+    void shouldNotAllowSellingPriceLowerThanCost() {
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"), "MXN")
+        );
+
+        Money newSellingPrice = new Money(
+                new BigDecimal("30.00"),
+                "MXN"
+        );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> product.changeSellingPrice(newSellingPrice)
+        );
+    }
+    @Test
+    void shouldCreateProductWithSellingPrice() {
+
+        Money cost = new Money(
+                new BigDecimal("120.00"),
+                "MXN"
+        );
+
+        Money sellingPrice = new Money(
+                new BigDecimal("180.00"),
+                "MXN"
+        );
+
+        Product product = Product.create(
+                ProductId.create(),
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                cost,
+                sellingPrice
+        );
+
+        assertNotNull(product);
+        assertEquals(sellingPrice, product.sellingPrice());
+    }
+
     @Test
     void shouldNotAllowChangingCostToDifferentCurrency() {
 
@@ -50,7 +174,8 @@ class ProductTest {
                 List.of("vainilla"),
                 ProductType.ICE_CREAM,
                 InventoryUnit.LITER,
-                new Money(new BigDecimal("120.00"), "MXN")
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"),"MXN")
         );
 
         Money newCost = new Money(
@@ -63,6 +188,7 @@ class ProductTest {
                 () -> product.changeCost(newCost)
         );
     }
+
     @Test
     void shouldRemainInactiveWhenDeactivatedMultipleTimes() {
 
@@ -74,7 +200,8 @@ class ProductTest {
                 List.of("mango"),
                 ProductType.POPSICLE,
                 InventoryUnit.UNIT,
-                new Money(new BigDecimal("15.00"), "MXN")
+                new Money(new BigDecimal("8.00"), "MXN"),
+                new Money(new BigDecimal("15.00"),"MXN")
         );
 
         product.deactivate();
@@ -93,7 +220,8 @@ class ProductTest {
                 List.of("mango"),
                 ProductType.POPSICLE,
                 InventoryUnit.UNIT,
-                new Money(new BigDecimal("15.00"), "MXN")
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"),"MXN")
         );
 
         product.activate();
@@ -114,7 +242,8 @@ class ProductTest {
                         List.of("mango", ""),
                         ProductType.ICE_CREAM,
                         InventoryUnit.LITER,
-                        new Money(new BigDecimal("120.00"), "MXN")
+                        new Money(new BigDecimal("35.00"), "MXN"),
+                        new Money(new BigDecimal("60.00"),"MXN")
                 )
         );
     }
@@ -129,6 +258,7 @@ class ProductTest {
                 List.of(),
                 ProductType.SNACK,
                 InventoryUnit.UNIT,
+                new Money(new BigDecimal("12.00"), "MXN"),
                 new Money(new BigDecimal("20.00"), "MXN")
         );
 
@@ -148,6 +278,7 @@ class ProductTest {
                         List.of(),
                         ProductType.SNACK,
                         InventoryUnit.UNIT,
+                        new Money(new BigDecimal("12.00"), "MXN"),
                         new Money(new BigDecimal("20.00"), "MXN")
                 )
         );
@@ -165,7 +296,8 @@ class ProductTest {
                         List.of(),
                         ProductType.SNACK,
                         InventoryUnit.UNIT,
-                        new Money(new BigDecimal("20.00"), "MXN")
+                        new Money(new BigDecimal("20.00"), "MXN"),
+                        new Money(new BigDecimal("180.00"),"MXN")
                 )
         );
     }
@@ -180,6 +312,7 @@ class ProductTest {
                 List.of(),
                 ProductType.SNACK,
                 InventoryUnit.UNIT,
+                new Money(new BigDecimal("12.00"), "MXN"),
                 new Money(new BigDecimal("20.00"), "MXN")
         );
 
@@ -197,7 +330,8 @@ class ProductTest {
                 List.of("vainilla"),
                 ProductType.ICE_CREAM,
                 InventoryUnit.LITER,
-                new Money(new BigDecimal("120.00"), "MXN")
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"),"MXN")
         );
 
         assertThrows(
@@ -216,7 +350,8 @@ class ProductTest {
                 List.of("vainilla"),
                 ProductType.ICE_CREAM,
                 InventoryUnit.LITER,
-                new Money(new BigDecimal("120.00"), "MXN")
+                new Money(new BigDecimal("35.00"), "MXN"),
+                new Money(new BigDecimal("60.00"),"MXN")
         );
 
         Money newCost = new Money(
@@ -239,7 +374,8 @@ class ProductTest {
                 List.of("mango"),
                 ProductType.POPSICLE,
                 InventoryUnit.UNIT,
-                new Money(new BigDecimal("15.00"), "MXN")
+                new Money(new BigDecimal("8.00"), "MXN"),
+                new Money(new BigDecimal("15.00"),"MXN")
         );
 
         product.deactivate();
@@ -257,7 +393,8 @@ class ProductTest {
                 List.of("mango"),
                 ProductType.POPSICLE,
                 InventoryUnit.UNIT,
-                new Money(new BigDecimal("15.00"), "MXN")
+                new Money(new BigDecimal("8.00"), "MXN"),
+                new Money(new BigDecimal("15.00"),"MXN")
         );
 
         product.deactivate();
@@ -278,9 +415,9 @@ class ProductTest {
                         List.of("vainilla"),
                         ProductType.ICE_CREAM,
                         InventoryUnit.LITER,
-                        null
+                        null,
+                        new Money(new BigDecimal("60.00"),"MXN")
                 )
         );
     }
-
 }
