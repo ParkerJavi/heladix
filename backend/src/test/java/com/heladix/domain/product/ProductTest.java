@@ -43,6 +43,40 @@ class ProductTest {
         assertTrue(product.active());
     }
     @Test
+    void shouldNotCreateProductWhenSellingPriceIsLowerThanCost() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "Helado de vainilla",
+                        "Helado sabor vainilla",
+                        "HEL-VAN-001",
+                        List.of("vainilla"),
+                        ProductType.ICE_CREAM,
+                        InventoryUnit.LITER,
+                        new Money(new BigDecimal("60.00"), "MXN"),
+                        new Money(new BigDecimal("50.00"), "MXN")
+                )
+        );
+    }
+    @Test
+    void shouldNotCreateProductWithDifferentCurrencies() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> Product.create(
+                        ProductId.create(),
+                        "Helado de vainilla",
+                        "Helado sabor vainilla",
+                        "HEL-VAN-001",
+                        List.of("vainilla"),
+                        ProductType.ICE_CREAM,
+                        InventoryUnit.LITER,
+                        new Money(new BigDecimal("35.00"), "MXN"),
+                        new Money(new BigDecimal("4.00"), "USD")
+                )
+        );
+    }
+    @Test
     void shouldNotAllowNullProductId() {
 
         assertThrows(

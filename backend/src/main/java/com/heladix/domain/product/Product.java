@@ -57,11 +57,28 @@ public class Product {
 
         this.flavors = List.copyOf(validatedFlavors);
 
-        this.cost = Objects.requireNonNull(cost, "Product cost cannot be null");
+        this.cost = Objects.requireNonNull(
+                cost,
+                "Product cost cannot be null"
+        );
+
         this.sellingPrice = Objects.requireNonNull(
                 sellingPrice,
                 "Product selling price cannot be null"
         );
+
+        if (!this.cost.currency().equals(this.sellingPrice.currency())) {
+            throw new IllegalArgumentException(
+                    "Product cost and selling price currencies must match"
+            );
+        }
+
+        if (this.sellingPrice.amount().compareTo(this.cost.amount()) < 0) {
+            throw new IllegalArgumentException(
+                    "Product selling price cannot be lower than cost"
+            );
+        }
+
         this.active = true;
     }
 
@@ -70,7 +87,7 @@ public class Product {
             String name,
             String description,
             String sku,
-            List<String>flavors,
+            List<String> flavors,
             ProductType type,
             InventoryUnit inventoryUnit,
             Money cost,
