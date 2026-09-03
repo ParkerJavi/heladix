@@ -3,19 +3,29 @@ package com.heladix.application.product;
 import com.heladix.domain.product.InventoryUnit;
 import com.heladix.domain.product.Money;
 import com.heladix.domain.product.ProductType;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class CreateProductUseCaseTest {
+    private ProductRepository repository;
+    private CreateProductUseCase useCase;
+
+    @BeforeEach
+    void setUp() {
+        repository = mock(ProductRepository.class);
+        useCase = new CreateProductUseCase(repository);
+    }
 
     @Test
     void shouldCreateProduct() {
-
-        CreateProductUseCase useCase = new CreateProductUseCase();
 
         Money cost = new Money(
                 new BigDecimal("35.00"),
@@ -54,8 +64,6 @@ class CreateProductUseCaseTest {
     @Test
     void shouldNotCreateProductWhenSellingPriceIsLowerThanCost() {
 
-        CreateProductUseCase useCase = new CreateProductUseCase();
-
         Money cost = new Money(
                 new BigDecimal("60.00"),
                 "MXN"
@@ -80,10 +88,9 @@ class CreateProductUseCaseTest {
                 )
         );
     }
+
     @Test
     void shouldNotCreateProductWithDifferentCurrencies() {
-
-        CreateProductUseCase useCase = new CreateProductUseCase();
 
         Money cost = new Money(
                 new BigDecimal("35.00"),
@@ -109,10 +116,9 @@ class CreateProductUseCaseTest {
                 )
         );
     }
+
     @Test
     void shouldNotCreateProductWithBlankName() {
-
-        CreateProductUseCase useCase = new CreateProductUseCase();
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -129,4 +135,30 @@ class CreateProductUseCaseTest {
         );
     }
 
+    @Test
+    void shouldSaveCreatedProduct() {
+
+        Money cost = new Money(
+                new BigDecimal("35.00"),
+                "MXN"
+        );
+
+        Money sellingPrice = new Money(
+                new BigDecimal("60.00"),
+                "MXN"
+        );
+
+        var product = useCase.execute(
+                "Helado de vainilla",
+                "Helado sabor vainilla",
+                "HEL-VAN-001",
+                List.of("vainilla"),
+                ProductType.ICE_CREAM,
+                InventoryUnit.LITER,
+                cost,
+                sellingPrice
+        );
+
+        verify(repository).save(product);
+    }
 }

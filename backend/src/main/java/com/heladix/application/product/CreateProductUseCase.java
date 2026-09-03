@@ -9,6 +9,11 @@ import com.heladix.domain.product.ProductType;
 import java.util.List;
 
 public class CreateProductUseCase {
+    private final ProductRepository productRepository;
+
+    public CreateProductUseCase(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public Product execute(
             String name,
@@ -21,7 +26,7 @@ public class CreateProductUseCase {
             Money sellingPrice
     ) {
 
-        return Product.create(
+        Product product = Product.create(
                 ProductId.create(),
                 name,
                 description,
@@ -32,5 +37,7 @@ public class CreateProductUseCase {
                 cost,
                 sellingPrice
         );
+        productRepository.save(product);
+        return product;
     }
 }
