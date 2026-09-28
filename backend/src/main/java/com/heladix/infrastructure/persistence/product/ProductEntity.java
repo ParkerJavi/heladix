@@ -1,28 +1,52 @@
 package com.heladix.infrastructure.persistence.product;
 
-
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
+@Table(name = "products")
 public class ProductEntity {
 
+    @Id
     private UUID id;
+
+    @Column(name = "name", nullable = false, length = 150)
     private String name;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "sku", nullable = false, length = 50, unique = true)
     private String sku;
+
+    @Column(name = "type", nullable = false, length = 30)
     private String type;
+
+    @Column(name = "inventory_unit", nullable = false, length = 20)
     private String inventoryUnit;
+
+    @Column(name = "cost_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal costAmount;
+
+    @Column(name = "cost_currency", nullable = false, length = 3)
     private String costCurrency;
+
+    @Column(name = "selling_price_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal sellingPriceAmount;
+
+    @Column(name = "selling_price_currency", nullable = false, length = 3)
     private String sellingPriceCurrency;
+
+    @Column(name = "active", nullable = false)
     private boolean active;
 
     protected ProductEntity() {
+        // Constructor requerido por JPA
     }
 
     public ProductEntity(
