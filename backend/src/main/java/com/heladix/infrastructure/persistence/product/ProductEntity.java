@@ -1,8 +1,13 @@
 package com.heladix.infrastructure.persistence.product;
 
+
+
+import jakarta.persistence.Entity;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Entity
 public class ProductEntity {
 
     private UUID id;
@@ -16,6 +21,9 @@ public class ProductEntity {
     private BigDecimal sellingPriceAmount;
     private String sellingPriceCurrency;
     private boolean active;
+
+    protected ProductEntity() {
+    }
 
     public ProductEntity(
             UUID id,

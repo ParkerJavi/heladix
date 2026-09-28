@@ -1,6 +1,8 @@
 package com.heladix.infrastructure.persistence.product;
 
 import org.junit.jupiter.api.Test;
+import jakarta.persistence.Entity;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -8,6 +10,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ProductEntityTest {
+    @Test
+    void shouldBeJpaEntity() {
+        assertTrue(ProductEntity.class.isAnnotationPresent(Entity.class));
+    }
 
     @Test
     void shouldCreateProductEntity() {
